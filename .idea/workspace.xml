@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e571c7d6-76d6-4ee2-8ba9-14bceab478f4" name="Changes" comment="Step 2B: visit timing">
-      <change afterPath="$PROJECT_DIR$/scripts/explore_measurements.py" afterDir="false" />
+    <list default="true" id="e571c7d6-76d6-4ee2-8ba9-14bceab478f4" name="Changes" comment="Step 2C: measurements, AE, DS">
+      <change afterPath="$PROJECT_DIR$/scripts/hunt_issues.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -98,13 +98,22 @@
       <option name="project" value="LOCAL" />
       <updated>1791025234080</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Step 2C: measurements, AE, DS">
+      <option name="closed" value="true" />
+      <created>1791025959742</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1791025959745</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Step 1: project setup and data download" />
     <MESSAGE value="Step 2A: DM exploration" />
     <MESSAGE value="Step 2B: visit timing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Step 2B: visit timing" />
+    <MESSAGE value="Step 2C: measurements, AE, DS" />
+    <option name="LAST_COMMIT_MESSAGE" value="Step 2C: measurements, AE, DS" />
   </component>
 </project>
