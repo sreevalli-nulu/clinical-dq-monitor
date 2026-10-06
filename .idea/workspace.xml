@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e571c7d6-76d6-4ee2-8ba9-14bceab478f4" name="Changes" comment="Step 3B: visit-level tables">
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    <list default="true" id="e571c7d6-76d6-4ee2-8ba9-14bceab478f4" name="Changes" comment="Step 3C: AE events and trial view">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,7 +129,15 @@
       <option name="project" value="LOCAL" />
       <updated>1791293008604</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Step 3C: AE events and trial view">
+      <option name="closed" value="true" />
+      <created>1791293592315</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1791293592316</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -140,6 +148,7 @@
     <MESSAGE value="Step 2D: data-quality hunt" />
     <MESSAGE value="Step 3A: config and subjects table" />
     <MESSAGE value="Step 3B: visit-level tables" />
-    <option name="LAST_COMMIT_MESSAGE" value="Step 3B: visit-level tables" />
+    <MESSAGE value="Step 3C: AE events and trial view" />
+    <option name="LAST_COMMIT_MESSAGE" value="Step 3C: AE events and trial view" />
   </component>
 </project>
