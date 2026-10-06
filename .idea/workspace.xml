@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e571c7d6-76d6-4ee2-8ba9-14bceab478f4" name="Changes" comment="Step 2D: data-quality hunt">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="e571c7d6-76d6-4ee2-8ba9-14bceab478f4" name="Changes" comment="Step 3A: config and subjects table">
+      <change afterPath="$PROJECT_DIR$/scripts/check_visits.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/visits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/derive.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/derive.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +115,15 @@
       <option name="project" value="LOCAL" />
       <updated>1791027414889</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Step 3A: config and subjects table">
+      <option name="closed" value="true" />
+      <created>1791292105761</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1791292105763</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -122,6 +132,7 @@
     <MESSAGE value="Step 2B: visit timing" />
     <MESSAGE value="Step 2C: measurements, AE, DS" />
     <MESSAGE value="Step 2D: data-quality hunt" />
-    <option name="LAST_COMMIT_MESSAGE" value="Step 2D: data-quality hunt" />
+    <MESSAGE value="Step 3A: config and subjects table" />
+    <option name="LAST_COMMIT_MESSAGE" value="Step 3A: config and subjects table" />
   </component>
 </project>
