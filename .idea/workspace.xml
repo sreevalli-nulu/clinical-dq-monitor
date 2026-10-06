@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e571c7d6-76d6-4ee2-8ba9-14bceab478f4" name="Changes" comment="Step 4: rule-based edit checks" />
+    <list default="true" id="e571c7d6-76d6-4ee2-8ba9-14bceab478f4" name="Changes" comment="Step 5: site-level KRIs and digit preference">
+      <change afterPath="$PROJECT_DIR$/scripts/check_injection.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/run_injection.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/evaluate.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/injector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -143,7 +149,15 @@
       <option name="project" value="LOCAL" />
       <updated>1791300391416</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Step 5: site-level KRIs and digit preference">
+      <option name="closed" value="true" />
+      <created>1791300733879</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1791300733881</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -156,6 +170,7 @@
     <MESSAGE value="Step 3B: visit-level tables" />
     <MESSAGE value="Step 3C: AE events and trial view" />
     <MESSAGE value="Step 4: rule-based edit checks" />
-    <option name="LAST_COMMIT_MESSAGE" value="Step 4: rule-based edit checks" />
+    <MESSAGE value="Step 5: site-level KRIs and digit preference" />
+    <option name="LAST_COMMIT_MESSAGE" value="Step 5: site-level KRIs and digit preference" />
   </component>
 </project>
