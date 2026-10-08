@@ -5,3 +5,7 @@
    scikit-learn
    anthropic
    python-dotenv
+   fastapi
+   uvicorn
+   hhtpx
+   

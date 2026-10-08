@@ -1,0 +1,510 @@
+[
+  {
+    "card_id": "RULE-R05-01-701-1211-1",
+    "kind": "RULE_FINDING",
+    "severity": "HIGH",
+    "site": "701",
+    "subject": "01-701-1211",
+    "where": "AE SUDDEN DEATH",
+    "evidence": {
+      "card_id": "RULE-R05-01-701-1211-1",
+      "kind": "RULE_FINDING",
+      "severity": "HIGH",
+      "rule_id": "R05",
+      "rule_name": "FATAL_NOT_SERIOUS",
+      "subject": "01-701-1211",
+      "site": "701",
+      "where": "AE SUDDEN DEATH",
+      "detail": "outcome FATAL but serious = N",
+      "value": null,
+      "rule_meaning": "A fatal adverse event is not marked as serious.",
+      "innocent_explanations": "By definition a fatal event is serious, so this is nearly always a missing or wrong flag in the record.",
+      "same_subject_other_flags": []
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Fatal Not Serious for subject 01-701-1211",
+      "what_we_saw": "A fatal adverse event is not marked as serious. Here: outcome FATAL but serious = N (AE SUDDEN DEATH).",
+      "why_it_matters": "Records that break this rule can distort the safety or efficacy picture if they are not corrected.",
+      "what_to_check": [
+        "Compare the record with the source document.",
+        "Consider the common innocent explanation: By definition a fatal event is serious, so this is nearly always a missing or wrong flag in the record."
+      ],
+      "caution": "This is a lead for a reviewer, not a conclusion that the record is wrong."
+    }
+  },
+  {
+    "card_id": "RULE-R05-01-704-1445-2",
+    "kind": "RULE_FINDING",
+    "severity": "HIGH",
+    "site": "704",
+    "subject": "01-704-1445",
+    "where": "AE COMPLETED SUICIDE",
+    "evidence": {
+      "card_id": "RULE-R05-01-704-1445-2",
+      "kind": "RULE_FINDING",
+      "severity": "HIGH",
+      "rule_id": "R05",
+      "rule_name": "FATAL_NOT_SERIOUS",
+      "subject": "01-704-1445",
+      "site": "704",
+      "where": "AE COMPLETED SUICIDE",
+      "detail": "outcome FATAL but serious = N",
+      "value": null,
+      "rule_meaning": "A fatal adverse event is not marked as serious.",
+      "innocent_explanations": "By definition a fatal event is serious, so this is nearly always a missing or wrong flag in the record.",
+      "same_subject_other_flags": []
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Fatal Not Serious for subject 01-704-1445",
+      "what_we_saw": "A fatal adverse event is not marked as serious. Here: outcome FATAL but serious = N (AE COMPLETED SUICIDE).",
+      "why_it_matters": "Records that break this rule can distort the safety or efficacy picture if they are not corrected.",
+      "what_to_check": [
+        "Compare the record with the source document.",
+        "Consider the common innocent explanation: By definition a fatal event is serious, so this is nearly always a missing or wrong flag in the record."
+      ],
+      "caution": "This is a lead for a reviewer, not a conclusion that the record is wrong."
+    }
+  },
+  {
+    "card_id": "RULE-R05-01-710-1083-3",
+    "kind": "RULE_FINDING",
+    "severity": "HIGH",
+    "site": "710",
+    "subject": "01-710-1083",
+    "where": "AE MYOCARDIAL INFARCTION",
+    "evidence": {
+      "card_id": "RULE-R05-01-710-1083-3",
+      "kind": "RULE_FINDING",
+      "severity": "HIGH",
+      "rule_id": "R05",
+      "rule_name": "FATAL_NOT_SERIOUS",
+      "subject": "01-710-1083",
+      "site": "710",
+      "where": "AE MYOCARDIAL INFARCTION",
+      "detail": "outcome FATAL but serious = N",
+      "value": null,
+      "rule_meaning": "A fatal adverse event is not marked as serious.",
+      "innocent_explanations": "By definition a fatal event is serious, so this is nearly always a missing or wrong flag in the record.",
+      "same_subject_other_flags": [
+        "VISIT_AFTER_DEATH"
+      ]
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Fatal Not Serious for subject 01-710-1083",
+      "what_we_saw": "A fatal adverse event is not marked as serious. Here: outcome FATAL but serious = N (AE MYOCARDIAL INFARCTION).",
+      "why_it_matters": "Records that break this rule can distort the safety or efficacy picture if they are not corrected.",
+      "what_to_check": [
+        "Compare the record with the source document.",
+        "Consider the common innocent explanation: By definition a fatal event is serious, so this is nearly always a missing or wrong flag in the record."
+      ],
+      "caution": "This is a lead for a reviewer, not a conclusion that the record is wrong."
+    }
+  },
+  {
+    "card_id": "RULE-R06-01-710-1083-4",
+    "kind": "RULE_FINDING",
+    "severity": "HIGH",
+    "site": "710",
+    "subject": "01-710-1083",
+    "where": "visit WEEK 2",
+    "evidence": {
+      "card_id": "RULE-R06-01-710-1083-4",
+      "kind": "RULE_FINDING",
+      "severity": "HIGH",
+      "rule_id": "R06",
+      "rule_name": "VISIT_AFTER_DEATH",
+      "subject": "01-710-1083",
+      "site": "710",
+      "where": "visit WEEK 2",
+      "detail": "visit on 2013-08-03, death on 2013-08-02",
+      "value": 1.0,
+      "rule_meaning": "A visit is dated after the subject's recorded death.",
+      "innocent_explanations": "Either the visit date or the death date may be mistyped (often off by a day), or the visit sits under the wrong subject.",
+      "same_subject_other_flags": [
+        "FATAL_NOT_SERIOUS"
+      ]
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Visit After Death for subject 01-710-1083",
+      "what_we_saw": "A visit is dated after the subject's recorded death. Here: visit on 2013-08-03, death on 2013-08-02 (visit WEEK 2).",
+      "why_it_matters": "Records that break this rule can distort the safety or efficacy picture if they are not corrected.",
+      "what_to_check": [
+        "Compare the record with the source document.",
+        "Consider the common innocent explanation: Either the visit date or the death date may be mistyped (often off by a day), or the visit sits under the wrong subject."
+      ],
+      "caution": "This is a lead for a reviewer, not a conclusion that the record is wrong."
+    }
+  },
+  {
+    "card_id": "SITE-DIGIT_0_5_SHARE-713",
+    "kind": "SITE_SIGNAL",
+    "severity": "ALERT",
+    "site": "713",
+    "subject": null,
+    "where": null,
+    "evidence": {
+      "card_id": "SITE-DIGIT_0_5_SHARE-713",
+      "kind": "SITE_SIGNAL",
+      "severity": "ALERT",
+      "kri": "DIGIT_0_5_SHARE",
+      "kri_meaning": "Average share of a patient's BP/pulse readings ending in 0 or 5 (digit preference; only HIGH is a concern)",
+      "site": "713",
+      "unit": "patients",
+      "n_units": 9,
+      "events": null,
+      "site_rate_pct": 71.9,
+      "rest_of_study_rate_pct": 34.1,
+      "z_score": 8.98,
+      "direction": "HIGH",
+      "tests_scored": 65,
+      "expected_flags_by_chance": 3.0,
+      "expected_if_no_rounding_pct": 20,
+      "innocent_explanations": "Staff or devices may round readings; check which device is used and who takes the measurement."
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Site 713: higher than other sites (digit 0 5 share)",
+      "what_we_saw": "Average share of a patient's BP/pulse readings ending in 0 or 5 (digit preference; only HIGH is a concern). Site 713 is at 71.9 percent against 34.1 percent in the other sites (z-score 8.98, 9 patients).",
+      "why_it_matters": "A site that differs a lot from the others can point to a data entry or conduct problem worth a closer look.",
+      "what_to_check": [
+        "Review the records behind this rate at the site.",
+        "Consider the common innocent explanation: Staff or devices may round readings; check which device is used and who takes the measurement."
+      ],
+      "caution": "65 site checks were scored, so about 3.0 flags are expected by chance alone."
+    }
+  },
+  {
+    "card_id": "SITE-DIGIT_0_5_SHARE-705",
+    "kind": "SITE_SIGNAL",
+    "severity": "ALERT",
+    "site": "705",
+    "subject": null,
+    "where": null,
+    "evidence": {
+      "card_id": "SITE-DIGIT_0_5_SHARE-705",
+      "kind": "SITE_SIGNAL",
+      "severity": "ALERT",
+      "kri": "DIGIT_0_5_SHARE",
+      "kri_meaning": "Average share of a patient's BP/pulse readings ending in 0 or 5 (digit preference; only HIGH is a concern)",
+      "site": "705",
+      "unit": "patients",
+      "n_units": 16,
+      "events": null,
+      "site_rate_pct": 62.1,
+      "rest_of_study_rate_pct": 33.6,
+      "z_score": 8.88,
+      "direction": "HIGH",
+      "tests_scored": 65,
+      "expected_flags_by_chance": 3.0,
+      "expected_if_no_rounding_pct": 20,
+      "innocent_explanations": "Staff or devices may round readings; check which device is used and who takes the measurement."
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Site 705: higher than other sites (digit 0 5 share)",
+      "what_we_saw": "Average share of a patient's BP/pulse readings ending in 0 or 5 (digit preference; only HIGH is a concern). Site 705 is at 62.1 percent against 33.6 percent in the other sites (z-score 8.88, 16 patients).",
+      "why_it_matters": "A site that differs a lot from the others can point to a data entry or conduct problem worth a closer look.",
+      "what_to_check": [
+        "Review the records behind this rate at the site.",
+        "Consider the common innocent explanation: Staff or devices may round readings; check which device is used and who takes the measurement."
+      ],
+      "caution": "65 site checks were scored, so about 3.0 flags are expected by chance alone."
+    }
+  },
+  {
+    "card_id": "SITE-DIGIT_0_5_SHARE-708",
+    "kind": "SITE_SIGNAL",
+    "severity": "ALERT",
+    "site": "708",
+    "subject": null,
+    "where": null,
+    "evidence": {
+      "card_id": "SITE-DIGIT_0_5_SHARE-708",
+      "kind": "SITE_SIGNAL",
+      "severity": "ALERT",
+      "kri": "DIGIT_0_5_SHARE",
+      "kri_meaning": "Average share of a patient's BP/pulse readings ending in 0 or 5 (digit preference; only HIGH is a concern)",
+      "site": "708",
+      "unit": "patients",
+      "n_units": 25,
+      "events": null,
+      "site_rate_pct": 44.5,
+      "rest_of_study_rate_pct": 34.5,
+      "z_score": 3.46,
+      "direction": "HIGH",
+      "tests_scored": 65,
+      "expected_flags_by_chance": 3.0,
+      "expected_if_no_rounding_pct": 20,
+      "innocent_explanations": "Staff or devices may round readings; check which device is used and who takes the measurement."
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Site 708: higher than other sites (digit 0 5 share)",
+      "what_we_saw": "Average share of a patient's BP/pulse readings ending in 0 or 5 (digit preference; only HIGH is a concern). Site 708 is at 44.5 percent against 34.5 percent in the other sites (z-score 3.46, 25 patients).",
+      "why_it_matters": "A site that differs a lot from the others can point to a data entry or conduct problem worth a closer look.",
+      "what_to_check": [
+        "Review the records behind this rate at the site.",
+        "Consider the common innocent explanation: Staff or devices may round readings; check which device is used and who takes the measurement."
+      ],
+      "caution": "65 site checks were scored, so about 3.0 flags are expected by chance alone."
+    }
+  },
+  {
+    "card_id": "SITE-OUT_OF_WINDOW_PATIENT_RATE-704",
+    "kind": "SITE_SIGNAL",
+    "severity": "ALERT",
+    "site": "704",
+    "subject": null,
+    "where": null,
+    "evidence": {
+      "card_id": "SITE-OUT_OF_WINDOW_PATIENT_RATE-704",
+      "kind": "SITE_SIGNAL",
+      "severity": "ALERT",
+      "kri": "OUT_OF_WINDOW_PATIENT_RATE",
+      "kri_meaning": "Dosed subjects with at least one out-of-window visit",
+      "site": "704",
+      "unit": "patients",
+      "n_units": 25,
+      "events": 19,
+      "site_rate_pct": 76.0,
+      "rest_of_study_rate_pct": 43.2,
+      "z_score": 3.31,
+      "direction": "HIGH",
+      "tests_scored": 65,
+      "expected_flags_by_chance": 3.0,
+      "expected_if_no_rounding_pct": null,
+      "innocent_explanations": "Travel distance, staffing or holidays can delay visits; check whether one or two patients drive the rate."
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Site 704: higher than other sites (out of window patient rate)",
+      "what_we_saw": "Dosed subjects with at least one out-of-window visit. Site 704 is at 76.0 percent against 43.2 percent in the other sites (z-score 3.31, 25 patients).",
+      "why_it_matters": "A site that differs a lot from the others can point to a data entry or conduct problem worth a closer look.",
+      "what_to_check": [
+        "Review the records behind this rate at the site.",
+        "Consider the common innocent explanation: Travel distance, staffing or holidays can delay visits; check whether one or two patients drive the rate."
+      ],
+      "caution": "65 site checks were scored, so about 3.0 flags are expected by chance alone."
+    }
+  },
+  {
+    "card_id": "SITE-DQ_FLAG_RATE-717",
+    "kind": "SITE_SIGNAL",
+    "severity": "WATCH",
+    "site": "717",
+    "subject": null,
+    "where": null,
+    "evidence": {
+      "card_id": "SITE-DQ_FLAG_RATE-717",
+      "kind": "SITE_SIGNAL",
+      "severity": "WATCH",
+      "kri": "DQ_FLAG_RATE",
+      "kri_meaning": "Dosed subjects with a HIGH/MEDIUM rule finding",
+      "site": "717",
+      "unit": "patients",
+      "n_units": 7,
+      "events": 3,
+      "site_rate_pct": 42.9,
+      "rest_of_study_rate_pct": 10.9,
+      "z_score": 2.71,
+      "direction": "HIGH",
+      "tests_scored": 65,
+      "expected_flags_by_chance": 3.0,
+      "expected_if_no_rounding_pct": null,
+      "innocent_explanations": "More rule findings per patient points to entry problems at the site; small sites move a lot with a few patients."
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Site 717: higher than other sites (dq flag rate)",
+      "what_we_saw": "Dosed subjects with a HIGH/MEDIUM rule finding. Site 717 is at 42.9 percent against 10.9 percent in the other sites (z-score 2.71, 7 patients).",
+      "why_it_matters": "A site that differs a lot from the others can point to a data entry or conduct problem worth a closer look.",
+      "what_to_check": [
+        "Review the records behind this rate at the site.",
+        "Consider the common innocent explanation: More rule findings per patient points to entry problems at the site; small sites move a lot with a few patients."
+      ],
+      "caution": "65 site checks were scored, so about 3.0 flags are expected by chance alone."
+    }
+  },
+  {
+    "card_id": "SITE-ANY_AE_RATE-703",
+    "kind": "SITE_SIGNAL",
+    "severity": "WATCH",
+    "site": "703",
+    "subject": null,
+    "where": null,
+    "evidence": {
+      "card_id": "SITE-ANY_AE_RATE-703",
+      "kind": "SITE_SIGNAL",
+      "severity": "WATCH",
+      "kri": "ANY_AE_RATE",
+      "kri_meaning": "Dosed subjects with at least one adverse event (low = possible under-reporting)",
+      "site": "703",
+      "unit": "patients",
+      "n_units": 18,
+      "events": 12,
+      "site_rate_pct": 66.7,
+      "rest_of_study_rate_pct": 87.3,
+      "z_score": -2.63,
+      "direction": "LOW",
+      "tests_scored": 65,
+      "expected_flags_by_chance": 3.0,
+      "expected_if_no_rounding_pct": null,
+      "innocent_explanations": "A low rate can mean under-reporting, but also a different mix of placebo and active patients (not adjusted for here) or a small sample."
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Site 703: lower than other sites (any ae rate)",
+      "what_we_saw": "Dosed subjects with at least one adverse event (low = possible under-reporting). Site 703 is at 66.7 percent against 87.3 percent in the other sites (z-score -2.63, 18 patients).",
+      "why_it_matters": "A site that differs a lot from the others can point to a data entry or conduct problem worth a closer look.",
+      "what_to_check": [
+        "Review the records behind this rate at the site.",
+        "Consider the common innocent explanation: A low rate can mean under-reporting, but also a different mix of placebo and active patients (not adjusted for here) or a small sample."
+      ],
+      "caution": "65 site checks were scored, so about 3.0 flags are expected by chance alone."
+    }
+  },
+  {
+    "card_id": "SITE-OUT_OF_WINDOW_PATIENT_RATE-701",
+    "kind": "SITE_SIGNAL",
+    "severity": "WATCH",
+    "site": "701",
+    "subject": null,
+    "where": null,
+    "evidence": {
+      "card_id": "SITE-OUT_OF_WINDOW_PATIENT_RATE-701",
+      "kind": "SITE_SIGNAL",
+      "severity": "WATCH",
+      "kri": "OUT_OF_WINDOW_PATIENT_RATE",
+      "kri_meaning": "Dosed subjects with at least one out-of-window visit",
+      "site": "701",
+      "unit": "patients",
+      "n_units": 41,
+      "events": 13,
+      "site_rate_pct": 31.7,
+      "rest_of_study_rate_pct": 49.3,
+      "z_score": -2.25,
+      "direction": "LOW",
+      "tests_scored": 65,
+      "expected_flags_by_chance": 3.0,
+      "expected_if_no_rounding_pct": null,
+      "innocent_explanations": "Travel distance, staffing or holidays can delay visits; check whether one or two patients drive the rate."
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Site 701: lower than other sites (out of window patient rate)",
+      "what_we_saw": "Dosed subjects with at least one out-of-window visit. Site 701 is at 31.7 percent against 49.3 percent in the other sites (z-score -2.25, 41 patients).",
+      "why_it_matters": "A site that differs a lot from the others can point to a data entry or conduct problem worth a closer look.",
+      "what_to_check": [
+        "Review the records behind this rate at the site.",
+        "Consider the common innocent explanation: Travel distance, staffing or holidays can delay visits; check whether one or two patients drive the rate."
+      ],
+      "caution": "65 site checks were scored, so about 3.0 flags are expected by chance alone."
+    }
+  },
+  {
+    "card_id": "SITE-DROPOUT_RATE-713",
+    "kind": "SITE_SIGNAL",
+    "severity": "WATCH",
+    "site": "713",
+    "subject": null,
+    "where": null,
+    "evidence": {
+      "card_id": "SITE-DROPOUT_RATE-713",
+      "kind": "SITE_SIGNAL",
+      "severity": "WATCH",
+      "kri": "DROPOUT_RATE",
+      "kri_meaning": "Dosed subjects who discontinued",
+      "site": "713",
+      "unit": "patients",
+      "n_units": 9,
+      "events": 2,
+      "site_rate_pct": 22.2,
+      "rest_of_study_rate_pct": 58.0,
+      "z_score": -2.17,
+      "direction": "LOW",
+      "tests_scored": 65,
+      "expected_flags_by_chance": 3.0,
+      "expected_if_no_rounding_pct": null,
+      "innocent_explanations": "Dropout depends on how sick patients are and on the mix of study arms; a small site can drift by chance."
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Site 713: lower than other sites (dropout rate)",
+      "what_we_saw": "Dosed subjects who discontinued. Site 713 is at 22.2 percent against 58.0 percent in the other sites (z-score -2.17, 9 patients).",
+      "why_it_matters": "A site that differs a lot from the others can point to a data entry or conduct problem worth a closer look.",
+      "what_to_check": [
+        "Review the records behind this rate at the site.",
+        "Consider the common innocent explanation: Dropout depends on how sick patients are and on the mix of study arms; a small site can drift by chance."
+      ],
+      "caution": "65 site checks were scored, so about 3.0 flags are expected by chance alone."
+    }
+  },
+  {
+    "card_id": "SITE-DROPOUT_RATE-704",
+    "kind": "SITE_SIGNAL",
+    "severity": "WATCH",
+    "site": "704",
+    "subject": null,
+    "where": null,
+    "evidence": {
+      "card_id": "SITE-DROPOUT_RATE-704",
+      "kind": "SITE_SIGNAL",
+      "severity": "WATCH",
+      "kri": "DROPOUT_RATE",
+      "kri_meaning": "Dosed subjects who discontinued",
+      "site": "704",
+      "unit": "patients",
+      "n_units": 25,
+      "events": 19,
+      "site_rate_pct": 76.0,
+      "rest_of_study_rate_pct": 54.6,
+      "z_score": 2.15,
+      "direction": "HIGH",
+      "tests_scored": 65,
+      "expected_flags_by_chance": 3.0,
+      "expected_if_no_rounding_pct": null,
+      "innocent_explanations": "Dropout depends on how sick patients are and on the mix of study arms; a small site can drift by chance."
+    },
+    "source": "template",
+    "model": null,
+    "fallback_reason": "AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'API key is invalid.'}, 'request_id': None}",
+    "explanation": {
+      "headline": "Site 704: higher than other sites (dropout rate)",
+      "what_we_saw": "Dosed subjects who discontinued. Site 704 is at 76.0 percent against 54.6 percent in the other sites (z-score 2.15, 25 patients).",
+      "why_it_matters": "A site that differs a lot from the others can point to a data entry or conduct problem worth a closer look.",
+      "what_to_check": [
+        "Review the records behind this rate at the site.",
+        "Consider the common innocent explanation: Dropout depends on how sick patients are and on the mix of study arms; a small site can drift by chance."
+      ],
+      "caution": "65 site checks were scored, so about 3.0 flags are expected by chance alone."
+    }
+  }
+]
