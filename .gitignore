@@ -1,5 +1,7 @@
-   .venv/
-   data/
    .env
+   .venv/
+   venv/
    __pycache__/
    .idea/
+   data/raw/
+   data/processed/

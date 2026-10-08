@@ -1,0 +1,7 @@
+# Only what the web app needs at run time (the pipeline's extra packages like scikit-learn are not needed here).
+# numpy and pyarrow are left to pick versions that match the Python version of the host.
+fastapi==0.143.0
+uvicorn==0.53.0
+pandas==3.0.5
+numpy>=2.0,<3
+pyarrow>=17

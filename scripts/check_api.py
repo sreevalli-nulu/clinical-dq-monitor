@@ -1,5 +1,6 @@
 """Step 9 checks. Runs the API in-process (no server needed) against the real result files."""
 import json
+import re
 import tempfile
 
 import pandas as pd
@@ -109,6 +110,39 @@ check("ML top-k size and order", len(scores) == 15 and scores == sorted(scores, 
 check("ML response states it is test data", "injected" in v["note"].lower())
 check("ML ae endpoint works", len(get("/ml/ae?k=5").json()["items"]) == 5)
 check("unknown ML kind is rejected (422)", get("/ml/banana").status_code == 422)
+
+# 8b ML performance agrees with scikit-learn and with the stored scores
+from sklearn.metrics import average_precision_score
+
+ml_v = pd.read_parquet(PROCESSED_DIR / "ml_visit_scores.parquet")
+ml_a = pd.read_parquet(PROCESSED_DIR / "ml_ae_scores.parquet")
+for which, frame in (("visits", ml_v), ("ae", ml_a)):
+    pf = get(f"/ml/{which}/performance").json()
+    ref_ap = average_precision_score(frame["IS_ERROR"], frame["SCORE"])
+    top_k = frame.sort_values("SCORE", ascending=False, kind="stable").head(pf["at_k"][0]["k"])
+    check(f"{which}: average precision matches scikit-learn", abs(pf["average_precision"] - ref_ap) < 1e-3,
+          f"{pf['average_precision']:.4f} vs {ref_ap:.4f}")
+    check(f"{which}: precision@k is hits/k and recall uses the answer key",
+          pf["at_k"][0]["hits"] == int(top_k["IS_ERROR"].sum()) and pf["errors"] == int(frame["IS_ERROR"].sum()))
+    check(f"{which}: rule precision and recall are consistent",
+          pf["rules"]["hits"] == int((frame["RULE_FLAG"] & frame["IS_ERROR"]).sum())
+          and abs(pf["rules"]["recall"] - pf["rules"]["hits"] / pf["errors"]) < 1e-9)
+
+# 8c the dashboard page and its headers
+page = get("/")
+check("dashboard page is served", page.status_code == 200 and "Clinical Data Quality Monitor" in page.text
+      and page.headers["content-type"].startswith("text/html"))
+check("page has a strict content-security-policy", "default-src 'self'" in page.headers.get("content-security-policy", "")
+      and page.headers.get("x-content-type-options") == "nosniff")
+check("page loads nothing from other websites", not re.findall(r'(?:src|href)=["\']https?://', page.text) and "<script src" not in page.text)
+
+# 8d the committed app_data copy (what a deployed server reads) serves the same numbers
+original = api.DATA_DIR
+api.DATA_DIR = api.APP_DATA_DIR
+copy_summary = get("/summary").json()
+api.DATA_DIR = original
+check("app_data copy gives the same summary as data/processed", copy_summary == get("/summary").json(),
+      "run scripts/export_app_data.py if this fails")
 
 # 9 missing data gives a clear 503, health still answers
 original = api.DATA_DIR

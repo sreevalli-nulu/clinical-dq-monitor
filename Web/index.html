@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clinical Data Quality Monitor</title>
+<meta name="description" content="Rule checks, site risk indicators and anomaly scores on the public CDISC Pilot 01 trial data. Flags are leads for a reviewer, not verdicts.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231c5cab'/%3E%3Cpath d='M4 17h6l3-8 5 15 3-7h7' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f4f1;
+  --surface: #fcfcfb;
+  --text: #0b0b0b;
+  --text-2: #52514e;
+  --text-3: #6b6a66;
+  --line: #e2e1dc;
+  --line-strong: #cfcdc6;
+  --accent: #1c5cab;
+  --accent-soft: #e6effa;
+  --focus: #2a78d6;
+  --div-mid: #f0efec;
+  --div-blue: #2a78d6;
+  --div-red: #e34948;
+  --sev-high: #d03b3b;
+  --sev-med: #ec835a;
+  --sev-low: #8a897f;
+  --good: #0ca30c;
+  --too-small-a: #ecebe6;
+  --too-small-b: #f7f6f3;
+  --shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --text: #f2f2ee; --text-2: #c3c2b7; --text-3: #9a998f;
+    --line: #2f2f2c; --line-strong: #44443f; --accent: #6da7ec; --accent-soft: #1d2a3b; --focus: #6da7ec;
+    --div-mid: #383835; --div-blue: #3987e5; --div-red: #e66767;
+    --too-small-a: #2a2a28; --too-small-b: #222220; --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --text: #f2f2ee; --text-2: #c3c2b7; --text-3: #9a998f;
+  --line: #2f2f2c; --line-strong: #44443f; --accent: #6da7ec; --accent-soft: #1d2a3b; --focus: #6da7ec;
+  --div-mid: #383835; --div-blue: #3987e5; --div-red: #e66767;
+  --too-small-a: #2a2a28; --too-small-b: #222220; --shadow: none;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+a { color: var(--accent); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+
+/* header */
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); }
+.top-row { display: flex; align-items: center; gap: 14px; padding: 14px 0 10px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+.brand svg { flex: none; }
+.brand h1 { margin: 0; font-size: 19px; letter-spacing: -.01em; line-height: 1.2; }
+.brand p { margin: 2px 0 0; color: var(--text-2); font-size: 13px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-strong); border-radius: 999px;
+  padding: 3px 10px; font-size: 12.5px; color: var(--text-2); background: var(--surface); white-space: nowrap; }
+.btn { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+.btn:hover { border-color: var(--accent); }
+.btn[disabled] { opacity: .45; cursor: default; border-color: var(--line-strong); }
+nav.tabs { display: flex; gap: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+nav.tabs a { text-decoration: none; color: var(--text-2); padding: 10px 14px; border-bottom: 3px solid transparent; white-space: nowrap; font-weight: 500; }
+nav.tabs a:hover { color: var(--text); }
+nav.tabs a[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
+
+main { padding: 22px 0 40px; }
+section.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 18px; box-shadow: var(--shadow); }
+h2 { margin: 0 0 4px; font-size: 17px; letter-spacing: -.005em; }
+h3 { margin: 18px 0 6px; font-size: 14.5px; }
+.sub { color: var(--text-2); margin: 0 0 14px; font-size: 14px; max-width: 74ch; }
+.muted { color: var(--text-3); }
+.hidden { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* notices */
+.banner { border: 1px solid var(--line-strong); border-left: 4px solid var(--sev-med); background: var(--surface); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; }
+.banner.error { border-left-color: var(--sev-high); }
+
+/* KPI tiles */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; box-shadow: var(--shadow); }
+.kpi .label { color: var(--text-2); font-size: 13px; }
+.kpi .value { font-size: 30px; font-weight: 650; letter-spacing: -.02em; line-height: 1.15; margin: 2px 0; }
+.kpi .note { color: var(--text-3); font-size: 12.5px; }
+
+/* badges */
+.badge { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-strong); border-radius: 6px; padding: 1px 8px; font-size: 12px; font-weight: 600; white-space: nowrap; background: var(--surface); }
+.badge i { font-style: normal; font-size: 11px; }
+.badge.high i { color: var(--sev-high); } .badge.medium i { color: var(--sev-med); } .badge.low i { color: var(--sev-low); }
+.badge.high { border-color: var(--sev-high); }
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; white-space: nowrap; }
+.chip.alert i { color: var(--sev-high); } .chip.watch i { color: var(--sev-med); } .chip.ok i { color: var(--good); } .chip.small i { color: var(--text-3); }
+.chip i { font-style: normal; }
+.src { font-size: 12px; color: var(--text-2); border: 1px dashed var(--line-strong); border-radius: 6px; padding: 1px 7px; }
+
+/* tables */
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12.5px; color: var(--text-2); font-weight: 600; white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tbody tr:hover { background: var(--accent-soft); }
+.linkbtn { background: none; border: 0; padding: 0; cursor: pointer; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+/* heat map */
+.heat { border-collapse: separate; border-spacing: 3px; width: 100%; min-width: 760px; }
+.heat th, .heat td { border: 0; padding: 0; }
+.heat thead th { padding: 4px 6px 8px; vertical-align: bottom; font-size: 12.5px; line-height: 1.25; }
+.heat tbody tr:hover { background: none; }
+.heat .sitecol { text-align: left; white-space: nowrap; padding-right: 10px; }
+.heat .sitecol .linkbtn { font-weight: 650; font-size: 14px; }
+.heat .sitecol small { display: block; color: var(--text-3); font-size: 12px; }
+.heat .fcol { white-space: nowrap; padding: 0 8px; font-size: 13px; text-align: left; }
+.cell { height: 44px; min-width: 96px; text-align: center; vertical-align: middle; border-radius: 6px; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 13.5px; position: relative; color: var(--text); }
+.cell small { display: block; font-weight: 500; font-size: 11px; opacity: .85; line-height: 1.1; }
+.cell.watch { box-shadow: inset 0 0 0 2px var(--text); }
+.cell.alert { box-shadow: inset 0 0 0 3px var(--text); }
+.cell.p3, .cell.p4, .cell.p5 { color: #0b0b0b; }
+.cell.small { background: repeating-linear-gradient(135deg, var(--too-small-a) 0 6px, var(--too-small-b) 6px 12px); color: var(--text-3); font-weight: 500; font-size: 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; margin-top: 12px; font-size: 13px; color: var(--text-2); }
+.scale { display: inline-flex; align-items: center; gap: 8px; }
+.scale .bar { width: 190px; height: 12px; border-radius: 6px; border: 1px solid var(--line-strong);
+  background: linear-gradient(90deg, var(--div-blue), var(--div-mid) 50%, var(--div-red)); }
+
+/* detail grids and cards */
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px; }
+.card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--surface); }
+.card header { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.card h4 { margin: 0 0 6px; font-size: 15.5px; line-height: 1.3; }
+.card p { margin: 6px 0; }
+.card ul { margin: 6px 0 6px 18px; padding: 0; }
+.card .k { font-weight: 650; }
+.card .caution { color: var(--text-2); font-size: 13.5px; border-top: 1px solid var(--line); margin-top: 10px; padding-top: 8px; }
+.card .meta { color: var(--text-3); font-size: 12.5px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px 16px; margin: 10px 0 4px; }
+.facts div { font-size: 13.5px; } .facts b { display: block; font-size: 12px; color: var(--text-3); font-weight: 600; }
+
+/* filters */
+.filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; margin-bottom: 12px; }
+.filters label { display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; color: var(--text-2); }
+select, input[type=text] { font: inherit; padding: 6px 9px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); min-width: 140px; }
+.pager { display: flex; align-items: center; gap: 10px; margin-top: 12px; color: var(--text-2); font-size: 13.5px; }
+
+/* score bars */
+.score { display: flex; align-items: center; gap: 8px; min-width: 150px; }
+.score .track { flex: 1; height: 8px; background: var(--div-mid); border-radius: 4px; overflow: hidden; }
+.score .fill { height: 100%; background: var(--div-blue); border-radius: 0 4px 4px 0; }
+
+dialog { border: 1px solid var(--line-strong); border-radius: 12px; padding: 0; width: min(760px, calc(100vw - 24px)); max-height: calc(100vh - 40px); background: var(--surface); color: var(--text); }
+dialog::backdrop { background: rgba(0,0,0,.45); }
+.dlg-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); }
+.dlg-head h2 { margin: 0; }
+.dlg-body { padding: 4px 18px 18px; }
+
+footer { color: var(--text-3); font-size: 13px; padding: 6px 0 30px; }
+footer p { margin: 4px 0; }
+.skeleton { color: var(--text-3); padding: 18px 4px; }
+@media (max-width: 640px) { .kpi .value { font-size: 26px; } .brand h1 { font-size: 17px; } }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <div class="brand">
+        <svg width="36" height="36" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#1c5cab"/><path d="M4 17h6l3-8 5 15 3-7h7" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div>
+          <h1>Clinical Data Quality Monitor</h1>
+          <p>Edit checks, site risk indicators and anomaly scores on the public CDISC Pilot 01 trial</p>
+        </div>
+      </div>
+      <span class="pill" title="Every flag is something for a person to look at. None of them is a conclusion.">Leads, not verdicts</span>
+      <button class="btn" id="themeBtn" type="button" aria-label="Switch between light and dark theme">Theme</button>
+    </div>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#overview" data-tab="overview">Overview</a>
+      <a href="#findings" data-tab="findings">Findings</a>
+      <a href="#explanations" data-tab="explanations">Explanations</a>
+      <a href="#model" data-tab="model">Anomaly model</a>
+      <a href="#about" data-tab="about">How to read this</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <div id="notice"></div>
+
+  <!-- OVERVIEW -->
+  <div data-view="overview">
+    <div class="kpis" id="kpis"><div class="skeleton">Loading…</div></div>
+    <section class="panel">
+      <h2>Which sites stand out?</h2>
+      <p class="sub">Each cell compares one site with all the other sites on one indicator. The number is a z-score: how many standard deviations the site is from the rest. Click a site to see the detail and the explanation cards.</p>
+      <div class="tablewrap" id="heatWrap"><div class="skeleton">Loading…</div></div>
+      <div class="legend" id="heatLegend"></div>
+    </section>
+    <section class="panel hidden" id="sitePanel" aria-live="polite"></section>
+  </div>
+
+  <!-- FINDINGS -->
+  <div data-view="findings" class="hidden">
+    <section class="panel">
+      <h2>Rule findings</h2>
+      <p class="sub">Nine edit checks run over the cleaned trial data. Most severe first. Click a subject ID to see everything we have on that person.</p>
+      <div class="filters">
+        <label>Severity<select id="fSeverity"><option value="">All</option><option>HIGH</option><option>MEDIUM</option><option>LOW</option></select></label>
+        <label>Rule<select id="fRule"><option value="">All</option></select></label>
+        <label>Site<select id="fSite"><option value="">All</option></select></label>
+        <label>Subject ID<input type="text" id="fSubject" placeholder="e.g. 01-701-1211" maxlength="20" autocomplete="off"></label>
+        <button class="btn" id="fClear" type="button">Clear filters</button>
+      </div>
+      <div class="tablewrap" id="findingsWrap"></div>
+      <div class="pager"><button class="btn" id="prevBtn" type="button">Previous</button><button class="btn" id="nextBtn" type="button">Next</button><span id="pageInfo"></span></div>
+    </section>
+  </div>
+
+  <!-- EXPLANATIONS -->
+  <div data-view="explanations" class="hidden">
+    <section class="panel">
+      <h2>Plain-language explanations</h2>
+      <p class="sub">Statistics and rules decide what gets flagged. The wording on these cards was written from facts the code computed, and every number is checked against those facts before a card is shown. The badge on each card says who wrote the wording.</p>
+      <div class="filters">
+        <label>Severity<select id="eSeverity"><option value="">All</option><option>HIGH</option><option>MEDIUM</option><option>LOW</option></select></label>
+        <label>Type<select id="eKind"><option value="">All</option><option value="RULE_FINDING">Rule finding</option><option value="SITE_SIGNAL">Site signal</option></select></label>
+      </div>
+      <div class="grid2" id="cards"></div>
+    </section>
+  </div>
+
+  <!-- MODEL -->
+  <div data-view="model" class="hidden">
+    <section class="panel">
+      <h2>Anomaly model (evaluated on test data)</h2>
+      <p class="sub">An Isolation Forest looks for visits and adverse-event records that are unusual compared with similar ones. To measure how well it works, the project made a copy of the trial data and hid known errors in it, so here we know the right answers. These are test results, not findings about the real trial.</p>
+      <div class="kpis" id="modelKpis"></div>
+      <h3>If reviewers read only the top-scored visits</h3>
+      <div class="tablewrap" id="perfVisits"></div>
+      <h3>If reviewers read only the top-scored adverse events</h3>
+      <div class="tablewrap" id="perfAe"></div>
+      <p class="sub" style="margin-top:12px"><b>What this says:</b> the rules are the main safety net, because they find nearly all the planted errors. The model is weaker, but it ranks real errors far above random and it points to records the rules were not written for. Precision is a lower bound: a top-scored record that is not in the answer key may still be a real issue in the original data.</p>
+      <h3>Top 15 most unusual visits</h3>
+      <p class="sub">Many of the very top-scored visits are planned in-person visits with no vitals or labs recorded at all. That is a real oddity in the data, but it is not one of the planted errors, so it counts against the model in the table above.</p>
+      <div class="tablewrap" id="mlVisits"></div>
+      <h3>Top 15 most unusual adverse-event records</h3>
+      <div class="tablewrap" id="mlAe"></div>
+    </section>
+  </div>
+
+  <!-- ABOUT -->
+  <div data-view="about" class="hidden">
+    <section class="panel">
+      <h2>How to read this dashboard</h2>
+      <div class="grid2" style="margin-top:12px">
+        <div class="card"><h4>Detect with code, explain with words</h4>
+          <p>Rules, z-scores and the anomaly model decide what is flagged and how severe it is. The explanation layer only turns those facts into plain language. It cannot change a severity, and a card is replaced by plain template wording if its text mentions a number that is not in the evidence or uses accusing words.</p></div>
+        <div class="card"><h4>Z-scores and the colours</h4>
+          <p>Red means a site is higher than the other sites, blue means lower. <b>Watch</b> is |z| of 2 or more, <b>Alert</b> is 3 or more. Which direction matters depends on the indicator: a low adverse-event rate can mean under-reporting, while for digit preference only a high share is a concern.</p></div>
+        <div class="card"><h4>Some flags are chance</h4>
+          <p>Every site is tested on several indicators. At the Watch level about 1 test in 22 flags by pure chance, so with dozens of tests a few flags are expected even when nothing is wrong. Treat a single Watch as a reason to look, not as evidence.</p></div>
+        <div class="card"><h4>Small sites</h4>
+          <p>A site with fewer than 5 dosed patients is marked <b>too few patients</b> and gets no z-score. A rate from one or two people tells us nothing.</p></div>
+        <div class="card"><h4>The data</h4>
+          <p>CDISC Pilot 01, a public sample clinical-trial dataset in the SDTM format. It is a teaching dataset, not a live study.</p></div>
+        <div class="card"><h4>What this is not</h4>
+          <p>This is a learning project. It is not validated software and must not be used for any clinical, regulatory or monitoring decision.</p></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="wrap">
+  <p>Educational project on public sample data. Not for clinical or regulatory use. Read-only API docs: <a href="/docs">/docs</a>.</p>
+</footer>
+
+<dialog id="subjectDlg" aria-labelledby="dlgTitle">
+  <div class="dlg-head"><h2 id="dlgTitle">Subject</h2><button class="btn" id="dlgClose" type="button">Close</button></div>
+  <div class="dlg-body" id="dlgBody"></div>
+</dialog>
+
+<script>
+"use strict";
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pct = (x, d = 1) => (x === null || x === undefined ? "–" : (x * 100).toFixed(d) + "%");
+const num = (x, d = 1) => (x === null || x === undefined ? "–" : Number(x).toFixed(d));
+
+const KRI_SHORT = {
+  DROPOUT_RATE: "Dropout", ANY_AE_RATE: "Any adverse event", OUT_OF_WINDOW_PATIENT_RATE: "Visits out of window",
+  DQ_FLAG_RATE: "Data-quality flags", DIGIT_0_5_SHARE: "Readings ending in 0 or 5",
+};
+const SEV = { HIGH: ["high", "▲"], MEDIUM: ["medium", "◆"], LOW: ["low", "●"] };
+const STATUS = {
+  ALERT: ["alert", "▲", "Alert"], WATCH: ["watch", "◆", "Watch"], OK: ["ok", "✓", "OK"], TOO_SMALL: ["small", "–", "Too few patients"],
+};
+
+async function api(path) {
+  const r = await fetch(path, { headers: { Accept: "application/json" } });
+  if (!r.ok) {
+    let detail = "";
+    try { detail = (await r.json()).detail; } catch (e) { /* not JSON */ }
+    throw new Error(detail || `${r.status} ${r.statusText}`);
+  }
+  return r.json();
+}
+const sevBadge = (s) => { const [c, i] = SEV[s] || ["low", "●"]; return `<span class="badge ${c}"><i aria-hidden="true">${i}</i>${esc(s)}</span>`; };
+const statusChip = (s) => { const [c, i, t] = STATUS[s] || ["small", "–", s]; return `<span class="chip ${c}"><i aria-hidden="true">${i}</i>${esc(t)}</span>`; };
+const yesNo = (b) => (b ? "Yes" : "No");
+
+function showError(err) {
+  $("#notice").innerHTML = `<div class="banner error" role="alert"><b>Could not load data.</b> ${esc(err.message || err)}</div>`;
+}
+function clearError() { $("#notice").innerHTML = ""; }
+
+/* ------------------------------------------------------------------ theme */
+const root = document.documentElement;
+function applyTheme(t) { if (t) root.setAttribute("data-theme", t); else root.removeAttribute("data-theme"); }
+try { applyTheme(localStorage.getItem("dq-theme")); } catch (e) { /* storage blocked */ }
+$("#themeBtn").addEventListener("click", () => {
+  const dark = root.getAttribute("data-theme") === "dark" ||
+    (!root.hasAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+  const next = dark ? "light" : "dark";
+  applyTheme(next);
+  try { localStorage.setItem("dq-theme", next); } catch (e) { /* storage blocked */ }
+});
+
+/* ----------------------------------------------------------------- router */
+const loaded = {};
+function parseHash() {
+  const [tab, qs] = location.hash.replace(/^#/, "").split("?");
+  return { tab: ["overview", "findings", "explanations", "model", "about"].includes(tab) ? tab : "overview", params: new URLSearchParams(qs || "") };
+}
+async function route() {
+  const { tab, params } = parseHash();
+  document.querySelectorAll("[data-view]").forEach((el) => el.classList.toggle("hidden", el.dataset.view !== tab));
+  document.querySelectorAll("nav.tabs a").forEach((a) => (a.dataset.tab === tab ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
+  clearError();
+  try {
+    if (tab === "overview" && !loaded.overview) { loaded.overview = true; await loadOverview(); }
+    if (tab === "findings") { await loadFindings(params); }
+    if (tab === "explanations" && !loaded.explanations) { loaded.explanations = true; await loadExplanations(); }
+    if (tab === "model" && !loaded.model) { loaded.model = true; await loadModel(); }
+    if (tab === "overview" && params.get("site")) { await showSite(params.get("site")); }
+  } catch (err) {
+    loaded[tab] = false;
+    showError(err);
+  }
+}
+window.addEventListener("hashchange", route);
+
+/* --------------------------------------------------------------- overview */
+async function loadOverview() {
+  const [sum, sites, matrix] = await Promise.all([api("/summary"), api("/sites"), api("/sites/matrix")]);
+  const sev = sum.findings.by_severity, sig = sum.site_signals;
+  const tests = sig.ALERT + sig.WATCH + sig.OK;
+  const chance = tests * 0.0455;
+  const srcText = Object.entries(sum.explanation_sources).map(([k, v]) => `${v} ${k}`).join(", ") || "none yet";
+  $("#kpis").innerHTML = [
+    ["Subjects", sum.subjects, `${sum.dosed_subjects} received study drug`],
+    ["Sites", sum.sites, `${sum.sites_by_worst_status.TOO_SMALL} too small for statistics`],
+    ["Rule findings", sum.findings.total, `${sev.HIGH} high · ${sev.MEDIUM} medium · ${sev.LOW} low`],
+    ["Site signals", sig.ALERT + sig.WATCH, `${sig.ALERT} alert · ${sig.WATCH} watch, from ${tests} tests (about ${chance.toFixed(0)} flags expected by chance)`],
+    ["Explanation cards", sum.explanation_cards ?? 0, `Wording by: ${srcText}`],
+  ].map(([l, v, n]) => `<div class="kpi"><div class="label">${esc(l)}</div><div class="value">${esc(v)}</div><div class="note">${esc(n)}</div></div>`).join("");
+
+  const byId = Object.fromEntries(matrix.rows.map((r) => [r.site, r]));
+  const head = matrix.kris.map((k) => `<th scope="col" title="${esc(k.label)}">${esc(KRI_SHORT[k.kri] || k.kri)}</th>`).join("");
+  const rows = sites.map((s) => {
+    const m = byId[s.site];
+    const cells = m.cells.map((c) => heatCell(c, matrix.kris.find((k) => k.kri === c.kri))).join("");
+    const f = s.findings;
+    return `<tr>
+      <th scope="row" class="sitecol"><button class="linkbtn" data-site="${esc(s.site)}" type="button">Site ${esc(s.site)}</button>
+        <small>${s.subjects} subjects · ${s.dosed} dosed</small></th>
+      <td class="fcol" title="High / medium / low rule findings">${sevBadgeCount(f)}</td>
+      ${cells}</tr>`;
+  }).join("");
+  $("#heatWrap").innerHTML = `<table class="heat"><caption class="sr-only">Z-score of each site on each risk indicator</caption>
+    <thead><tr><th scope="col">Site</th><th scope="col">Rule findings</th>${head}</tr></thead><tbody>${rows}</tbody></table>`;
+  $("#heatLegend").innerHTML = `
+    <span class="scale"><span>lower than other sites</span><span class="bar" aria-hidden="true"></span><span>higher</span></span>
+    <span>Outline: <b>◆</b> watch (|z| ≥ 2) · <b>▲</b> alert (|z| ≥ 3)</span>
+    <span>Hatched: too few dosed patients for a z-score</span>
+    <span>Readings ending in 0 or 5: only high values matter, so low values are shown pale</span>`;
+  $("#heatWrap").addEventListener("click", (e) => { const b = e.target.closest("[data-site]"); if (b) { location.hash = `#overview?site=${encodeURIComponent(b.dataset.site)}`; } });
+}
+function sevBadgeCount(f) {
+  const part = (label, n, cls, icon) => `<span class="badge ${n ? cls : "low"}" style="${n ? "" : "opacity:.5"}"><i aria-hidden="true">${icon}</i>${n}</span>`;
+  return `${part("High", f.HIGH, "high", "▲")} ${part("Medium", f.MEDIUM, "medium", "◆")} ${part("Low", f.LOW, "low", "●")}`;
+}
+function heatCell(c, kri) {
+  const label = esc(kri ? kri.label : c.kri);
+  if (c.z === null) return `<td class="cell small" title="${label}: too few dosed patients at this site">too few<small>patients</small></td>`;
+  // Digit preference is only a concern when HIGH, so a low value keeps its number but gets the palest colour.
+  const muted = c.kri === "DIGIT_0_5_SHARE" && c.z < 0;
+  const p = muted ? 0.2 : Math.min(Math.abs(c.z) / 4, 1);
+  const step = Math.max(1, Math.round(p * 5));
+  const pole = c.z >= 0 ? "var(--div-red)" : "var(--div-blue)";
+  const bg = `color-mix(in oklab, var(--div-mid) ${100 - step * 20}%, ${pole} ${step * 20}%)`;
+  const mark = c.status === "ALERT" ? "▲ " : c.status === "WATCH" ? "◆ " : "";
+  const mag = Math.abs(c.z).toFixed(1);
+  const sign = mag === "0.0" ? "" : c.z > 0 ? "+" : "−";
+  const note = muted ? " (low is not a concern for this indicator)" : "";
+  return `<td class="cell p${step} ${c.status === "ALERT" ? "alert" : c.status === "WATCH" ? "watch" : ""}" style="background:${bg}" title="${label}: z = ${num(c.z, 2)} (${esc(STATUS[c.status] ? STATUS[c.status][2] : c.status)})${note}">${mark}${sign}${mag}</td>`;
+}
+
+async function showSite(site) {
+  const panel = $("#sitePanel");
+  panel.classList.remove("hidden");
+  panel.innerHTML = `<div class="skeleton">Loading site ${esc(site)}…</div>`;
+  try {
+    const d = await api(`/sites/${encodeURIComponent(site)}`);
+    const rows = d.kris.map((k) => `<tr>
+        <td>${esc(KRI_SHORT[k.KRI] || k.KRI)}<div class="muted" style="font-size:12.5px">${esc(k.LABEL || "")}</div></td>
+        <td class="num">${pct(k.RATE)}</td><td class="num">${pct(k.REF_RATE)}</td>
+        <td class="num">${k.Z === null ? "–" : num(k.Z, 2)}</td><td>${statusChip(k.STATUS)}</td>
+        <td>${k.DIRECTION ? esc(String(k.DIRECTION).toLowerCase()) + " than others" : "–"}</td><td class="num">${esc(k.N)}</td></tr>`).join("");
+    const f = d.findings;
+    panel.innerHTML = `
+      <h2>Site ${esc(d.site)}</h2>
+      <p class="sub">${d.subjects} subjects, ${d.dosed} dosed${d.small_site ? " (small site: too few dosed patients for statistics)" : ""}. Rule findings: ${sevBadgeCount(f)}
+        · <a href="#findings?site=${encodeURIComponent(d.site)}">see these findings</a></p>
+      <div class="tablewrap"><table><thead><tr><th>Indicator</th><th class="num">This site</th><th class="num">Other sites</th><th class="num">z</th><th>Status</th><th>Direction</th><th class="num">Patients</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <h3>Explanation cards for this site</h3>
+      ${d.explanations.length ? `<div class="grid2">${d.explanations.map(cardHtml).join("")}</div>` : `<p class="muted">No explanation cards for this site. Cards are written for HIGH findings and for Watch or Alert signals only.</p>`}`;
+    panel.scrollIntoView({ block: "start" });
+  } catch (err) { panel.innerHTML = `<div class="banner error">${esc(err.message)}</div>`; }
+}
+
+/* --------------------------------------------------------------- findings */
+const fState = { offset: 0, limit: 25, total: 0, ready: false };
+async function ensureFindingFilters() {
+  if (fState.ready) return;
+  const [rules, sites] = await Promise.all([api("/rules"), api("/sites")]);
+  $("#fRule").innerHTML = `<option value="">All</option>` + rules.map((r) => `<option value="${esc(r.rule_id)}">${esc(r.rule_id)} ${esc(r.rule_name)} (${r.findings})</option>`).join("");
+  $("#fSite").innerHTML = `<option value="">All</option>` + sites.map((s) => `<option value="${esc(s.site)}">Site ${esc(s.site)}</option>`).join("");
+  ["fSeverity", "fRule", "fSite"].forEach((id) => $("#" + id).addEventListener("change", () => { fState.offset = 0; fetchFindings(); }));
+  let t; $("#fSubject").addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { fState.offset = 0; fetchFindings(); }, 350); });
+  $("#fClear").addEventListener("click", () => { ["fSeverity", "fRule", "fSite", "fSubject"].forEach((id) => ($("#" + id).value = "")); fState.offset = 0; history.replaceState(null, "", "#findings"); fetchFindings(); });
+  $("#prevBtn").addEventListener("click", () => { fState.offset = Math.max(0, fState.offset - fState.limit); fetchFindings(); });
+  $("#nextBtn").addEventListener("click", () => { fState.offset += fState.limit; fetchFindings(); });
+  fState.ready = true;
+}
+async function loadFindings(params) {
+  await ensureFindingFilters();
+  if (params.has("site")) $("#fSite").value = params.get("site");
+  if (params.has("severity")) $("#fSeverity").value = params.get("severity");
+  if (params.has("rule")) $("#fRule").value = params.get("rule");
+  if (params.has("subject")) $("#fSubject").value = params.get("subject");
+  fState.offset = 0;
+  await fetchFindings();
+}
+async function fetchFindings() {
+  const q = new URLSearchParams({ limit: fState.limit, offset: fState.offset });
+  const subj = $("#fSubject").value.trim();
+  [["severity", $("#fSeverity").value], ["rule_id", $("#fRule").value], ["site", $("#fSite").value], ["subject", subj]].forEach(([k, v]) => { if (v) q.set(k, v); });
+  if (subj && !/^[A-Za-z0-9-]{1,20}$/.test(subj)) { $("#findingsWrap").innerHTML = `<p class="muted">Subject IDs contain only letters, digits and dashes.</p>`; return; }
+  try {
+    const d = await api(`/findings?${q}`);
+    fState.total = d.total;
+    const rows = d.items.map((i) => `<tr><td>${sevBadge(i.SEVERITY)}</td><td><span class="mono">${esc(i.RULE_ID)}</span> ${esc(i.RULE_NAME)}</td>
+      <td>${esc(i.SITEID)}</td><td><button class="linkbtn mono" data-subject="${esc(i.USUBJID)}" type="button">${esc(i.USUBJID)}</button></td>
+      <td>${esc(i.WHERE)}</td><td>${esc(i.DETAIL)}</td><td class="num">${i.VALUE === null ? "–" : esc(i.VALUE)}</td></tr>`).join("");
+    $("#findingsWrap").innerHTML = d.items.length
+      ? `<table><thead><tr><th>Severity</th><th>Rule</th><th>Site</th><th>Subject</th><th>Where</th><th>Detail</th><th class="num">Value</th></tr></thead><tbody>${rows}</tbody></table>`
+      : `<p class="muted">No findings match these filters.</p>`;
+    const from = d.total ? d.offset + 1 : 0, to = Math.min(d.offset + d.limit, d.total);
+    $("#pageInfo").textContent = `Showing ${from}–${to} of ${d.total}`;
+    $("#prevBtn").disabled = d.offset === 0;
+    $("#nextBtn").disabled = d.offset + d.limit >= d.total;
+  } catch (err) { showError(err); }
+}
+$("#findingsWrap").addEventListener("click", (e) => { const b = e.target.closest("[data-subject]"); if (b) openSubject(b.dataset.subject); });
+
+/* ---------------------------------------------------------------- subject */
+async function openSubject(id) {
+  const dlg = $("#subjectDlg");
+  $("#dlgTitle").textContent = `Subject ${id}`;
+  $("#dlgBody").innerHTML = `<div class="skeleton">Loading…</div>`;
+  if (!dlg.open) dlg.showModal();
+  try {
+    const d = await api(`/subjects/${encodeURIComponent(id)}`);
+    const s = d.subject;
+    const facts = [["Site", s.SITEID], ["Planned arm", s.ARM], ["Actual arm", s.ACTARM], ["Age / sex", `${s.AGE ?? "–"} / ${s.SEX ?? "–"}`],
+      ["First dose", s.RFSTDT ? String(s.RFSTDT).slice(0, 10) : "–"], ["Disposition", s.DISPOSITION], ["Visits recorded", s.N_VISITS], ["Died", yesNo(s.DIED)]];
+    const rows = d.findings.map((i) => `<tr><td>${sevBadge(i.SEVERITY)}</td><td><span class="mono">${esc(i.RULE_ID)}</span> ${esc(i.RULE_NAME)}</td><td>${esc(i.WHERE)}</td><td>${esc(i.DETAIL)}</td></tr>`).join("");
+    $("#dlgBody").innerHTML = `
+      <div class="facts">${facts.map(([k, v]) => `<div><b>${esc(k)}</b>${esc(v ?? "–")}</div>`).join("")}</div>
+      <h3>Findings (${d.findings.length})</h3>
+      ${d.findings.length ? `<div class="tablewrap"><table><thead><tr><th>Severity</th><th>Rule</th><th>Where</th><th>Detail</th></tr></thead><tbody>${rows}</tbody></table></div>` : `<p class="muted">No rule findings for this subject.</p>`}
+      ${d.explanations.length ? `<h3>Explanation cards</h3><div class="grid2">${d.explanations.map(cardHtml).join("")}</div>` : ""}`;
+  } catch (err) { $("#dlgBody").innerHTML = `<div class="banner error">${esc(err.message)}</div>`; }
+}
+$("#dlgClose").addEventListener("click", () => $("#subjectDlg").close());
+$("#subjectDlg").addEventListener("click", (e) => { if (e.target === $("#subjectDlg")) $("#subjectDlg").close(); });
+
+/* ----------------------------------------------------------- explanations */
+function cardHtml(c) {
+  const e = c.explanation;
+  const who = c.source === "claude" ? `Wording by Claude${c.model ? ` (${esc(c.model)})` : ""}` : "Template wording";
+  const where = [c.kind === "SITE_SIGNAL" ? "Site signal" : "Rule finding", `site ${c.site}`, c.subject ? `subject ${c.subject}` : null].filter(Boolean).join(" · ");
+  return `<article class="card">
+    <header>${sevBadge(c.severity)}<span class="src" title="${esc(c.fallback_reason || "")}">${who}</span></header>
+    <h4>${esc(e.headline)}</h4>
+    <div class="meta">${esc(where)}</div>
+    <p>${esc(e.what_we_saw)}</p>
+    <p><span class="k">Why it matters.</span> ${esc(e.why_it_matters)}</p>
+    <p class="k" style="margin-bottom:0">What to check</p>
+    <ul>${e.what_to_check.map((a) => `<li>${esc(a)}</li>`).join("")}</ul>
+    <p class="caution">${esc(e.caution)}</p>
+  </article>`;
+}
+let allCards = [];
+async function loadExplanations() {
+  allCards = await api("/explanations");
+  ["eSeverity", "eKind"].forEach((id) => $("#" + id).addEventListener("change", renderCards));
+  renderCards();
+}
+function renderCards() {
+  const sev = $("#eSeverity").value, kind = $("#eKind").value;
+  const list = allCards.filter((c) => (!sev || c.severity === sev) && (!kind || c.kind === kind));
+  $("#cards").innerHTML = list.length ? list.map(cardHtml).join("") : `<p class="muted">No cards match these filters.</p>`;
+}
+
+/* ------------------------------------------------------------------ model */
+async function loadModel() {
+  const [vp, ap, v, a] = await Promise.all([api("/ml/visits/performance"), api("/ml/ae/performance"), api("/ml/visits?k=15"), api("/ml/ae?k=15")]);
+  const kpi = (l, val, n) => `<div class="kpi"><div class="label">${esc(l)}</div><div class="value">${esc(val)}</div><div class="note">${esc(n)}</div></div>`;
+  const times = (p) => (p.average_precision / p.base_rate).toFixed(0);
+  $("#modelKpis").innerHTML = [
+    kpi("Rules: planted visit errors found", pct(vp.rules.recall, 0), `${vp.rules.flagged} visits flagged, ${pct(vp.rules.precision, 0)} of them hold a planted error`),
+    kpi("Model on visits: average precision", num(vp.average_precision, 2), `random guessing scores ${num(vp.base_rate, 2)}, so about ${times(vp)}× better`),
+    kpi("Rule R07: planted back-dated AEs found", pct(ap.rules.recall, 0), `${ap.rules.flagged} events flagged, ${pct(ap.rules.precision, 0)} of them back-dated`),
+    kpi("Model on adverse events: average precision", num(ap.average_precision, 2), `random guessing scores ${num(ap.base_rate, 2)}, so about ${times(ap)}× better`),
+  ].join("");
+  $("#perfVisits").innerHTML = perfTable(vp, vp.rules_plus_model
+    ? `<p class="muted" style="margin:8px 0 0">Rules plus the model's top ${vp.rules_plus_model.model_top_k} visits together flag ${vp.rules_plus_model.flagged} visits and find ${pct(vp.rules_plus_model.recall, 1)} of the planted errors.</p>` : "");
+  $("#perfAe").innerHTML = perfTable(ap, "");
+  $("#mlVisits").innerHTML = mlTable(v.items, (i) => `<td class="mono">${esc(i.USUBJID)}</td><td>${esc(i.VISIT)}</td>`, "<th>Subject</th><th>Visit</th>");
+  $("#mlAe").innerHTML = mlTable(a.items, (i) => `<td class="mono">${esc(i.USUBJID)}</td><td>${esc(i.AETERM)} <span class="muted">(site ${esc(i.SITEID)}, record ${esc(i.AESPID)})</span></td>`, "<th>Subject</th><th>Adverse event</th>");
+}
+function perfTable(p, extra) {
+  const rows = p.at_k.map((r) => `<tr><td class="num">${r.k}</td><td class="num">${r.hits}</td><td class="num">${pct(r.precision, 0)}</td><td class="num">${pct(r.recall, 0)}</td><td class="num">${num(r.lift, 1)}×</td></tr>`).join("");
+  return `<table><thead><tr><th class="num">Top-scored ${esc(p.units)} read</th><th class="num">Planted errors found</th><th class="num">Precision</th><th class="num">Recall</th><th class="num">vs random</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="muted" style="margin:8px 0 0">${p.n} ${esc(p.units)} in total, ${p.errors} with a planted error (${pct(p.base_rate, 1)}).</p>${extra}`;
+}
+function mlTable(items, lead, headLead) {
+  const scores = items.map((i) => i.SCORE), lo = Math.min(...scores), hi = Math.max(...scores);
+  const w = (s) => (hi === lo ? 100 : 25 + 75 * ((s - lo) / (hi - lo)));
+  const rows = items.map((i, n) => `<tr><td class="num">${n + 1}</td>${lead(i)}
+    <td><div class="score"><div class="track"><div class="fill" style="width:${w(i.SCORE).toFixed(0)}%"></div></div><span class="mono">${num(i.SCORE, 3)}</span></div></td>
+    <td>${i.IS_ERROR ? "<b>Yes</b>" : "No"}</td><td>${yesNo(i.RULE_FLAG)}</td></tr>`).join("");
+  return `<table><thead><tr><th class="num">#</th>${headLead}<th>Anomaly score</th><th>Known injected error?</th><th>Also flagged by a rule?</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+route();
+</script>
+</body>
+</html>

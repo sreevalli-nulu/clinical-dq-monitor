@@ -6,15 +6,34 @@ flagged, Claude (or the template) only wrote the wording, and this layer never c
 """
 import os
 from functools import lru_cache
+from pathlib import Path as FsPath
 from typing import Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Path, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from src.api_data import MissingDataError, Store
 from src.trial_view import PROCESSED_DIR
 
-DATA_DIR = PROCESSED_DIR                      # tests point this at another folder
+ROOT = FsPath(__file__).resolve().parents[1]
+WEB_DIR = ROOT / "web"                        # the dashboard page lives here
+APP_DATA_DIR = ROOT / "app_data"              # small copy of the results that is committed for deployment
+
+
+def default_data_dir() -> FsPath:
+    """Where the result files are read from.
+    1) DQ_DATA_DIR if set, 2) your fresh local results in data/processed, 3) the committed app_data copy
+    (this is what a deployed server uses, because data/processed is not committed)."""
+    env = os.environ.get("DQ_DATA_DIR")
+    if env:
+        return FsPath(env)
+    if (PROCESSED_DIR / "findings_rules.parquet").exists():
+        return PROCESSED_DIR
+    return APP_DATA_DIR
+
+
+DATA_DIR = default_data_dir()                 # tests point this at another folder
 SAFE_ID = r"^[A-Za-z0-9-]{1,20}$"             # site ids and subject ids: letters, digits, dashes only
 Severity = Literal["HIGH", "MEDIUM", "LOW"]
 
@@ -30,6 +49,25 @@ app = FastAPI(
 # For a deployment, set DQ_CORS_ORIGINS="https://your-dashboard.example" (comma-separated) to restrict it.
 origins = [o.strip() for o in os.environ.get("DQ_CORS_ORIGINS", "*").split(",") if o.strip()]
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET"], allow_headers=["*"])
+
+
+# The page is one self-contained file (inline CSS and JS, no outside scripts), so the policy can be strict.
+PAGE_HEADERS = {
+    "Content-Security-Policy": ("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+                                "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; "
+                                "form-action 'none'"),
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+}
+
+
+@app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)
+def dashboard():
+    """The dashboard page."""
+    page = WEB_DIR / "index.html"
+    if not page.exists():
+        raise HTTPException(status_code=404, detail="web/index.html is missing")
+    return FileResponse(page, media_type="text/html", headers=PAGE_HEADERS)
 
 
 @lru_cache(maxsize=4)
@@ -121,6 +159,14 @@ def explanations(severity: Severity | None = None,
     """Explanation cards. 'source' says whether Claude or the plain template wrote the wording."""
     need(store.explanations, "run_explain.py")
     return store.explanations_query(severity, site, kind)
+
+
+@app.get("/ml/{which}/performance", tags=["ml"])
+def ml_performance(which: Literal["visits", "ae"], store: Store = Depends(get_store)):
+    """Precision, recall and average precision of the anomaly scores against the known answer key,
+    next to the rules. Computed from the stored scores; nothing is re-trained here."""
+    need(store.ml_visits if which == "visits" else store.ml_ae, "run_ml.py")
+    return store.ml_performance(which)
 
 
 @app.get("/ml/{which}", tags=["ml"])

@@ -7,6 +7,7 @@ a flag, a z-score or a severity, so the API can never disagree with the pipeline
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from src.rules import RULES, SEVERITY_ORDER
@@ -181,3 +182,29 @@ class Store:
                 "ae": ["USUBJID", "SITEID", "AESPID", "AETERM", "SCORE", "RULE_FLAG", "IS_ERROR"]}[which]
         top = df.sort_values("SCORE", ascending=False, kind="stable").head(k)[cols]
         return to_records(top)
+
+    def ml_performance(self, which: str) -> dict:
+        """Precision and recall of the anomaly scores against the Step 6 answer key (IS_ERROR).
+        Pure pandas/numpy so the deployed server does not need scikit-learn."""
+        df = self.ml_visits if which == "visits" else self.ml_ae
+        ranked = df.sort_values("SCORE", ascending=False, kind="stable")
+        y = ranked["IS_ERROR"].to_numpy(dtype=bool)
+        n, n_err = len(y), int(y.sum())
+        base = n_err / n
+        hits_cum = np.cumsum(y)
+        avg_prec = float((hits_cum[y] / (np.flatnonzero(y) + 1)).mean()) if n_err else 0.0
+        ks = [k for k in ([25, 50, 100, 200, 400] if which == "visits" else [10, 25, 50, 100]) if k <= n]
+        at_k = [{"k": k, "hits": int(hits_cum[k - 1]), "precision": float(hits_cum[k - 1] / k),
+                 "recall": float(hits_cum[k - 1] / n_err), "lift": float(hits_cum[k - 1] / k / base)} for k in ks]
+        flagged = df["RULE_FLAG"].to_numpy(dtype=bool)
+        rule_hits = int((flagged & df["IS_ERROR"].to_numpy(dtype=bool)).sum())
+        out = {"units": "visits" if which == "visits" else "adverse events", "n": n, "errors": n_err, "base_rate": base,
+               "average_precision": avg_prec, "at_k": at_k,
+               "rules": {"flagged": int(flagged.sum()), "hits": rule_hits,
+                         "precision": rule_hits / max(int(flagged.sum()), 1), "recall": rule_hits / n_err},
+               "rules_plus_model": None}
+        if which == "visits" and "ML_TOPK" in df:
+            union = flagged | df["ML_TOPK"].to_numpy(dtype=bool)
+            out["rules_plus_model"] = {"model_top_k": int(df["ML_TOPK"].sum()), "flagged": int(union.sum()),
+                                       "recall": float((union & df["IS_ERROR"].to_numpy(dtype=bool)).sum() / n_err)}
+        return out
