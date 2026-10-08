@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e571c7d6-76d6-4ee2-8ba9-14bceab478f4" name="Changes" comment="Step 6: error injector and scoring">
-      <change afterPath="$PROJECT_DIR$/scripts/check_ml.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/run_ml.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/evaluate_ml.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ml.py" afterDir="false" />
+    <list default="true" id="e571c7d6-76d6-4ee2-8ba9-14bceab478f4" name="Changes" comment="Step 7: isolation forest and precision/recall">
+      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/check_api_key.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/check_explain.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/run_explain.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/evidence.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/explain.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
@@ -166,7 +168,15 @@
       <option name="project" value="LOCAL" />
       <updated>1791301334161</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Step 7: isolation forest and precision/recall">
+      <option name="closed" value="true" />
+      <created>1791302440400</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1791302440401</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -181,6 +191,7 @@
     <MESSAGE value="Step 4: rule-based edit checks" />
     <MESSAGE value="Step 5: site-level KRIs and digit preference" />
     <MESSAGE value="Step 6: error injector and scoring" />
-    <option name="LAST_COMMIT_MESSAGE" value="Step 6: error injector and scoring" />
+    <MESSAGE value="Step 7: isolation forest and precision/recall" />
+    <option name="LAST_COMMIT_MESSAGE" value="Step 7: isolation forest and precision/recall" />
   </component>
 </project>
