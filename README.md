@@ -13,7 +13,7 @@ It runs on the public **CDISC Pilot 01** sample trial (306 subjects, 17 sites). 
 
 **Flags are leads for a reviewer, never verdicts.** Statistics detect, the language layer only explains: it cannot change a severity, and a card is replaced by template wording if its text contains a number that is not in the evidence or accusing words such as "fraud".
 
-> Live app: _add your link here after you deploy (see Deploy below)_
+> Live app: https://clinical-dq-monitor.onrender.com/
 
 ## What the numbers say
 
